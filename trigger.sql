@@ -1,6 +1,6 @@
-﻿use banhang;
+use banhang;
 go
-create trigger capnhatkho_hoadon on chitiethoadon -- trigger nằm ở bảng chittiethoadon
+create or alter trigger capnhatkho_hoadon on chitiethoadon -- trigger nằm ở bảng chittiethoadon
 after insert -- thời điểm kích hoạt 
 as
 begin
@@ -9,7 +9,8 @@ begin
 	from sanpham
 	inner join inserted i on sanpham.masp=i.masp; -- khi thêm 1 dòng vào chitiethoadon, sql tạo ra 1 bảng ảo là inserted 
 end;
-create trigger nhapkho_giavon on chitietphieunhap
+go 
+create or alter trigger nhapkho_giavon on chitietphieunhap
 after insert
 as
 begin
@@ -25,7 +26,8 @@ begin
 	from sanpham
 	inner join inserted i on sanpham.masp=i.masp;
 end;
-create trigger kiemtratonkho on chitiethoadon
+go 
+create or alter trigger kiemtratonkho on chitiethoadon
 instead of insert -- dùng instead of để chặn trước khi dl vào bảng
 as
 begin
@@ -44,11 +46,26 @@ begin
 			insert into chitiethoadon select*from inserted;
 		end
 end;
-create trigger tinhtongtien on chitiethoadon
+go 
+create or alter trigger tinhtongtien on chitiethoadon
 after insert, update, delete
 as 
 begin
 	update hoadon
 	set tongtien=(select sum(soluong*giaban) from chitiethoadon where mahd=hoadon.mahd)
 	where mahd in (select mahd from inserted union select mahd from deleted);
+end;
+go 
+create or alter trigger tudonglaygia
+on chitiethoadon
+after insert
+as
+begin
+update cthd
+	set
+	cthd.giaban=sp.giaban,
+	cthd.giavon=sp.giavon
+	from chitiethoadon cthd
+	inner join inserted i on cthd.mahd=i.mahd and cthd.masp=i.masp
+	inner join sanpham sp on i.masp=sp.masp;
 end;
