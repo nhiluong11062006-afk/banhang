@@ -5,24 +5,25 @@ GO
 CREATE TABLE khachhang (
 	makh INT PRIMARY KEY IDENTITY (1,1),
 	hoten NVARCHAR(100) NOT NULL,
-	sdt VARCHAR(15),
+	sdt VARCHAR(15) UNIQUE,
 	diachi NVARCHAR(200)
 );
 CREATE TABLE nhanvien(
 	manv INT PRIMARY KEY IDENTITY (1,1),
 	hoten NVARCHAR (100) NOT NULL,
-	cccd VARCHAR(15),
-	sdt varchar (15),
+	cccd VARCHAR(15) unique ,
+	sdt varchar (15) unique ,
 	diachi nvarchar (100)
 );
 create table sanpham(
-	masp int primary key identity (1,1),
+	masp varchar(50) primary key ,
 	tensp nvarchar(100) not null,
 	mausac nvarchar(100),
 	size varchar(10),
 	soluong int,
-	giaban decimal (18,2),
-	giavon decimal (18,2)
+	giaban decimal (18,2) default 0,
+	giavon decimal (18,2) default 0,
+	constraint uq_sp unique (tensp,mausac,size)
 );
 CREATE TABLE hoadon (
 	mahd INT PRIMARY KEY IDENTITY (1,1),
@@ -37,7 +38,7 @@ CREATE TABLE hoadon (
 );
 create table chitiethoadon (
 	mahd int,
-	masp int,
+	masp varchar(50),
 	soluong int, -- -1 là bán, +1 là trả hàng 
 	giaban decimal (18,2),
 	giavon decimal (18,2),
@@ -61,7 +62,7 @@ create table phieunhapkho (
 );
 create table chitietphieunhap (
 	mapn int,
-	masp int,
+	masp varchar(50),
 	soluong int,
 	dongia decimal (18,2),
 	primary key (mapn, masp),
